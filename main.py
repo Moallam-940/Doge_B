@@ -2,8 +2,8 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 import os
 
 # تهيئة المتصفح
@@ -38,6 +38,9 @@ options.add_argument('--safebrowsing-disable-auto-update')
 options.add_argument('--enable-automation')
 options.add_argument('--password-store=basic')
 options.add_argument('--use-mock-keychain')
+
+# تحديد المسار الصحيح لـ Chrome
+options.binary_location = "/usr/bin/google-chrome-stable"
 
 # استخدام webdriver_manager لتثبيت chromedriver تلقائيًا
 print("جاري تثبيت chromedriver...")
