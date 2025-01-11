@@ -1,54 +1,43 @@
+from flask import Flask, request, jsonify
+from playwright.sync_api import sync_playwright
 import os
-import requests
-from bs4 import BeautifulSoup
+
+app = Flask(__name__)
 
 # استرجاع المتغيرات البيئية
 EMAIL = os.getenv('EMAIL')
 PASSWORD = os.getenv('PASSWORD')
 
-# عنوان URL للصفحة
-LOGIN_URL = 'https://dogecoin-miner.com/#/login'
+@app.route('/login', methods=['POST'])
+def login():
+    with sync_playwright() as p:
+        # تشغيل المتصفح (headless=True للخلفية)
+        browser = p.chromium.launch(headless=True)
+        page = browser.new_page()
 
-# إنشاء جلسة
-session = requests.Session()
+        # الانتقال إلى صفحة تسجيل الدخول
+        page.goto('https://dogecoin-miner.com/#/login')
 
-# إضافة رؤوس HTTP مطلوبة
-headers = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-    'Referer': LOGIN_URL,
-}
+        # انتظار تحميل الصفحة
+        page.wait_for_selector('input[name="email"]')
 
-# جلب صفحة تسجيل الدخول لاستخراج التوكن إذا لزم الأمر
-print("جلب صفحة تسجيل الدخول...")
-response = session.get(LOGIN_URL, headers=headers)
-print("حالة الاستجابة:", response.status_code)
+        # إدخال بيانات تسجيل الدخول
+        page.fill('input[name="email"]', EMAIL)
+        page.fill('input[name="password"]', PASSWORD)
 
-# تحليل HTML لاستخراج التوكن إذا لزم الأمر
-soup = BeautifulSoup(response.text, 'html.parser')
-csrf_token = soup.find('input', {'name': 'csrf_token'})  # تعديل هذا بناءً على HTML الفعلي
-if csrf_token:
-    csrf_token = csrf_token['value']
-    print("تم استخراج توكن CSRF:", csrf_token)
-else:
-    print("لم يتم العثور على توكن CSRF.")
+        # النقر على زر تسجيل الدخول
+        page.click('button[type="submit"]')
 
-# بيانات تسجيل الدخول
-payload = {
-    'email': EMAIL,
-    'password': PASSWORD,
-}
-if csrf_token:
-    payload['csrf_token'] = csrf_token  # إضافة التوكن إذا كان موجودًا
+        # انتظار تحميل الصفحة التالية
+        page.wait_for_selector('body')
 
-# إرسال طلب تسجيل الدخول
-print("إرسال طلب تسجيل الدخول...")
-login_response = session.post(LOGIN_URL, data=payload, headers=headers)
-print("حالة تسجيل الدخول:", login_response.status_code)
+        # التحقق من نجاح تسجيل الدخول
+        if page.url != 'https://dogecoin-miner.com/#/login':
+            browser.close()
+            return jsonify({"status": "success", "message": "تم تسجيل الدخول بنجاح!"})
+        else:
+            browser.close()
+            return jsonify({"status": "error", "message": "فشل تسجيل الدخول."})
 
-# التحقق من نجاح تسجيل الدخول
-if login_response.status_code == 200:
-    print("تم تسجيل الدخول بنجاح!")
-    print("الاستجابة:", login_response.text)  # طباعة الاستجابة لفهم النتيجة
-else:
-    print("فشل تسجيل الدخول:", login_response.status_code)
-    print("الاستجابة:", login_response.text)  # طباعة الاستجابة لفهم الخطأ
+if __name__ == '__main__':
+    app.run(host='0.0.0.0', port=5000)
