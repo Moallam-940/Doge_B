@@ -36,5 +36,8 @@ RUN pip install --no-cache-dir -r requirements.txt
 # تثبيت متصفحات Playwright
 RUN playwright install
 
+# تعيين البورت الذي يعمل عليه التطبيق
+EXPOSE 10000
+
 # تعيين الأمر الافتراضي لتشغيل التطبيق
-CMD ["gunicorn", "app:app"]
+CMD ["gunicorn", "app:app", "--bind", "0.0.0.0:10000"]
