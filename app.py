@@ -8,6 +8,12 @@ app = Flask(__name__)
 EMAIL = os.getenv('EMAIL')
 PASSWORD = os.getenv('PASSWORD')
 
+# مسار رئيسي للتحقق من أن الخادم يعمل
+@app.route('/')
+def home():
+    return "Welcome to the Dogecoin Miner API!"
+
+# مسار تسجيل الدخول
 @app.route('/login', methods=['POST'])
 def login():
     with sync_playwright() as p:
@@ -40,4 +46,4 @@ def login():
             return jsonify({"status": "error", "message": "فشل تسجيل الدخول."})
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+    app.run(host='0.0.0.0', port=10000)  # تشغيل الخادم على البورت 10000
