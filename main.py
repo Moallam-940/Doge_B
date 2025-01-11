@@ -21,7 +21,7 @@ else:
     exit()
 
 # الوصول إلى الصفحة المطلوبة بعد تسجيل الدخول
-target_url = 'https://example.com/protected-page'
+target_url = 'https://dogecoin-miner.com/#/'
 response = session.get(target_url)
 
 # عرض محتوى الصفحة
