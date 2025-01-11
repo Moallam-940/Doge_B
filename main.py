@@ -2,12 +2,9 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
-import chromedriver_autoinstaller
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 import os
-
-# تثبيت chromedriver تلقائيًا
-print("جاري تثبيت chromedriver...")
-chromedriver_autoinstaller.install()
 
 # تهيئة المتصفح
 print("جاري تهيئة المتصفح...")
@@ -42,11 +39,12 @@ options.add_argument('--enable-automation')
 options.add_argument('--password-store=basic')
 options.add_argument('--use-mock-keychain')
 
-# تحديد المسار الصحيح لـ Chrome
-options.binary_location = "/usr/bin/google-chrome-stable"
+# استخدام webdriver_manager لتثبيت chromedriver تلقائيًا
+print("جاري تثبيت chromedriver...")
+service = Service(ChromeDriverManager().install())
 
 # تهيئة المتصفح
-driver = webdriver.Chrome(options=options)
+driver = webdriver.Chrome(service=service, options=options)
 
 # قراءة بيانات الاعتماد من متغيرات البيئة
 email = os.getenv('EMAIL')  # البريد الإلكتروني
@@ -58,7 +56,7 @@ if not email or not password:
     exit()
 
 # الانتقال إلى صفحة تسجيل الدخول
-login_url = 'https://dogecoin-miner.com/#/'
+login_url = 'https://dogecoin-miner.com/#/login'
 print(f"جاري الانتقال إلى صفحة تسجيل الدخول: {login_url}")
 driver.get(login_url)
 
