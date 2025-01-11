@@ -15,6 +15,37 @@ options = webdriver.ChromeOptions()
 options.add_argument('--headless')  # تشغيل المتصفح في الوضع الخفي (بدون واجهة)
 options.add_argument('--no-sandbox')
 options.add_argument('--disable-dev-shm-usage')
+options.add_argument('--disable-gpu')
+options.add_argument('--remote-debugging-port=9222')
+options.add_argument('--disable-software-rasterizer')
+options.add_argument('--disable-extensions')
+options.add_argument('--disable-background-networking')
+options.add_argument('--disable-background-timer-throttling')
+options.add_argument('--disable-backgrounding-occluded-windows')
+options.add_argument('--disable-breakpad')
+options.add_argument('--disable-client-side-phishing-detection')
+options.add_argument('--disable-component-update')
+options.add_argument('--disable-default-apps')
+options.add_argument('--disable-domain-reliability')
+options.add_argument('--disable-features=AudioServiceOutOfProcess')
+options.add_argument('--disable-hang-monitor')
+options.add_argument('--disable-ipc-flooding-protection')
+options.add_argument('--disable-popup-blocking')
+options.add_argument('--disable-prompt-on-repost')
+options.add_argument('--disable-renderer-backgrounding')
+options.add_argument('--disable-sync')
+options.add_argument('--force-color-profile=srgb')
+options.add_argument('--metrics-recording-only')
+options.add_argument('--no-first-run')
+options.add_argument('--safebrowsing-disable-auto-update')
+options.add_argument('--enable-automation')
+options.add_argument('--password-store=basic')
+options.add_argument('--use-mock-keychain')
+
+# تحديد المسار الصحيح لـ Chrome
+options.binary_location = "/usr/bin/google-chrome-stable"
+
+# تهيئة المتصفح
 driver = webdriver.Chrome(options=options)
 
 # قراءة بيانات الاعتماد من متغيرات البيئة
@@ -27,7 +58,7 @@ if not email or not password:
     exit()
 
 # الانتقال إلى صفحة تسجيل الدخول
-login_url = 'https://dogecoin-miner.com/#/login'
+login_url = 'https://dogecoin-miner.com/#/'
 print(f"جاري الانتقال إلى صفحة تسجيل الدخول: {login_url}")
 driver.get(login_url)
 
